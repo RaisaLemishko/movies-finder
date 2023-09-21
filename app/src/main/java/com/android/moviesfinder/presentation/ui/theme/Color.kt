@@ -1,4 +1,4 @@
-package com.android.moviesfinder.ui.theme
+package com.android.moviesfinder.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

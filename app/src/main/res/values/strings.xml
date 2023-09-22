@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Movies Finder</string>
+    <string name="unexpected_error_occurred">An unexpected error occurred</string>
+    <string name="no_connection_error">Could not reach the server. Check your internet connection</string>
 </resources>

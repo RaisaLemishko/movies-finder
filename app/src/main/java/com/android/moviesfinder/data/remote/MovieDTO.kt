@@ -3,6 +3,7 @@ package com.android.moviesfinder.data.remote
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.android.moviesfinder.common.MOVIE_POSTER_BASE_URL
 import com.android.moviesfinder.domain.model.Movie
 
 @Keep
@@ -37,6 +38,6 @@ fun MovieDTO.toMovie(): Movie {
         description = overview,
         voteAverage = voteAverage,
         releaseDate = releaseDate,
-        posterPath = posterPath
+        posterUrl = MOVIE_POSTER_BASE_URL + posterPath
     )
 }

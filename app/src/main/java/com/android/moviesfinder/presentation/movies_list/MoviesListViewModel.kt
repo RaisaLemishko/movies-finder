@@ -23,31 +23,34 @@ class MoviesListViewModel
     val state: State<MoviesListState> = _state
 
     init {
-        getMovies()
+        fetchMovies()
     }
 
-    private fun getMovies() {
+    fun refresh() {
+        fetchMovies(isRefreshing = true)
+    }
+
+    private fun fetchMovies(isRefreshing: Boolean = false) {
         getMoviesUseCase(
             page = 1 //todo add real pagination
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = MoviesListState(
-                        isLoading = false,
+                        isLoading = !isRefreshing,
+                        isRefreshing = isRefreshing,
                         movies = result.data?.movies ?: emptyList()
                     )
                 }
-
                 is Resource.Error -> {
                     _state.value = MoviesListState(
                         isLoading = false,
-                        error = result.message
-                            ?: UiText.StringResource(R.string.unexpected_error_occurred)
+                        isRefreshing = false,
+                        error = result.message ?: UiText.StringResource(R.string.unexpected_error_occurred)
                     )
                 }
-
                 is Resource.Loading -> {
-                    _state.value = MoviesListState(isLoading = true)
+                    _state.value = MoviesListState(isLoading = !isRefreshing, isRefreshing = isRefreshing)
                 }
             }
         }.launchIn(viewModelScope)

@@ -27,6 +27,9 @@ import androidx.navigation.NavController
 import com.android.moviesfinder.R
 import com.android.moviesfinder.domain.model.Movie
 import com.android.moviesfinder.presentation.movies_list.MoviesListViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun MoviesListScreen(
@@ -34,6 +37,9 @@ fun MoviesListScreen(
     viewModel: MoviesListViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = state.isRefreshing
+    )
     val tabTitles = listOf(
         stringResource(R.string.tab_all),
         stringResource(R.string.tab_favorites)
@@ -55,7 +61,12 @@ fun MoviesListScreen(
         }
 
         when (selectedTabIndex) {
-            0 -> AllMoviesTab(movies = state.movies)
+            0 -> AllMoviesTab(
+                movies = state.movies,
+                swipeRefreshState = swipeRefreshState,
+                viewModel::refresh
+            )
+
             1 -> FavoritesTab()
         }
 
@@ -90,22 +101,30 @@ fun DisplayLoading() {
 }
 
 @Composable
-fun AllMoviesTab(movies: List<Movie>) {
+fun AllMoviesTab(
+    movies: List<Movie>,
+    swipeRefreshState: SwipeRefreshState,
+    onRefresh: () -> Unit
+) {
     val groupedMovies = movies.groupBy {
         getMonthFromReleaseDate(it.releaseDate)
     }
-
-    LazyColumn {
-        groupedMovies.forEach { (month, moviesInMonth) ->
-            item {
-                Text(
-                    text = month,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-            items(moviesInMonth) { movie ->
-                MovieListItem(movie = movie)
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = { onRefresh }
+    ) {
+        LazyColumn {
+            groupedMovies.forEach { (month, moviesInMonth) ->
+                item {
+                    Text(
+                        text = month,
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+                items(moviesInMonth) { movie ->
+                    MovieListItem(movie = movie)
+                }
             }
         }
     }

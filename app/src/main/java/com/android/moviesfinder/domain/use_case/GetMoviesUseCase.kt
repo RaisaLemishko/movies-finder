@@ -3,7 +3,7 @@ package com.android.moviesfinder.domain.use_case
 import com.android.moviesfinder.R
 import com.android.moviesfinder.common.Resource
 import com.android.moviesfinder.common.UiText
-import com.android.moviesfinder.data.remote.toMoviesList
+import com.android.moviesfinder.data.db.toMoviesList
 import com.android.moviesfinder.domain.model.MoviesList
 import com.android.moviesfinder.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow

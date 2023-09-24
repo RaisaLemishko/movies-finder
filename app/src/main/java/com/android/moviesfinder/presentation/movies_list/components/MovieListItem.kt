@@ -1,5 +1,6 @@
 package com.android.moviesfinder.presentation.movies_list.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import com.android.moviesfinder.domain.model.Movie
 
 @Composable
 fun MovieListItem(movie: Movie) {
+    Log.d("TAG_RA", "MovieListItem")
     Card(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,9 +1,16 @@
 package com.android.moviesfinder.di
 
 import android.content.Context
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.room.Room
 import com.android.moviesfinder.BuildConfig
 import com.android.moviesfinder.common.BASE_URL
 import com.android.moviesfinder.data.data.MoviesRepositoryImpl
+import com.android.moviesfinder.data.db.MovieDatabase
+import com.android.moviesfinder.data.db.MovieEntity
+import com.android.moviesfinder.data.remote.MovieRemoteMediator
 import com.android.moviesfinder.data.remote.MoviesApi
 import com.android.moviesfinder.domain.repository.MoviesRepository
 import com.chuckerteam.chucker.api.ChuckerCollector
@@ -20,6 +27,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
+@OptIn(ExperimentalPagingApi::class)
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -71,4 +79,36 @@ object AppModule {
     @Singleton
     @Named("apiKey")
     fun provideApiKey(): String = BuildConfig.MOVIES_API_KEY
+
+    @Provides
+    @Singleton
+    fun provideMovieDatabase(@ApplicationContext context: Context): MovieDatabase {
+        return Room.databaseBuilder(
+            context,
+            MovieDatabase::class.java,
+            "movies.db"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMoviePager(
+        movieDb: MovieDatabase,
+        moviesApi: MoviesApi,
+        @Named("apiKey") apiKey: String
+    ): Pager<Int, MovieEntity> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                initialLoadSize = 20,
+                prefetchDistance = 10,
+            ),
+            pagingSourceFactory = { movieDb.dao.pagingSource() },
+            remoteMediator = MovieRemoteMediator(
+                moviesApi = moviesApi,
+                movieDb = movieDb,
+                apiKey = apiKey
+            )
+        )
+    }
 }

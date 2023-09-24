@@ -1,5 +1,6 @@
 package com.android.moviesfinder.data.remote
 
+import com.android.moviesfinder.data.remote.dto.MoviesResponseDTO
 import retrofit2.http.GET
 import retrofit2.http.Query
 

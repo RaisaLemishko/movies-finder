@@ -1,4 +1,4 @@
-package com.android.moviesfinder.data.remote
+package com.android.moviesfinder.data.remote.dto
 
 
 import com.google.gson.annotations.SerializedName
@@ -31,13 +31,3 @@ data class MovieDTO(
     @SerializedName("vote_count")
     val voteCount: Int = 0 // 686
 )
-
-fun MovieDTO.toMovie(): Movie {
-    return Movie(
-        title = title,
-        description = overview,
-        voteAverage = voteAverage,
-        releaseDate = releaseDate,
-        posterUrl = MOVIE_POSTER_BASE_URL + posterPath
-    )
-}

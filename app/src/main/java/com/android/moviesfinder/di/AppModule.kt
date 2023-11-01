@@ -10,6 +10,9 @@ import com.android.moviesfinder.data.db.MovieDatabase
 import com.android.moviesfinder.data.remote.MoviesApi
 import com.android.moviesfinder.domain.repository.FavoriteMoviesRepository
 import com.android.moviesfinder.domain.repository.MoviesRepository
+import com.android.moviesfinder.domain.use_case.AddFavoriteMovieUseCase
+import com.android.moviesfinder.domain.use_case.GetFavoriteMoviesUseCase
+import com.android.moviesfinder.domain.use_case.RemoveFavoriteMovieUseCase
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dagger.Module
@@ -101,5 +104,35 @@ object AppModule {
             MovieDatabase::class.java,
             "movies.db"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoriteMoviesUseCase(
+        favoriteMoviesRepo: FavoriteMoviesRepository
+    ): GetFavoriteMoviesUseCase {
+        return GetFavoriteMoviesUseCase(
+            favoriteMoviesRepository = favoriteMoviesRepo
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddFavoriteMoviesUseCase(
+        favoriteMoviesRepo: FavoriteMoviesRepository
+    ): AddFavoriteMovieUseCase {
+        return AddFavoriteMovieUseCase(
+            favoriteMoviesRepository = favoriteMoviesRepo
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoveFavoriteMoviesUseCase(
+        favoriteMoviesRepo: FavoriteMoviesRepository
+    ): RemoveFavoriteMovieUseCase {
+        return RemoveFavoriteMovieUseCase(
+            favoriteMoviesRepository = favoriteMoviesRepo
+        )
     }
 }

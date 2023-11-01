@@ -28,10 +28,16 @@ class MoviesRepositoryImpl
             try {
                 val moviesResponse = moviesApi.getMovies(apiKey = apiKey, page = page)
                 movieDb.withTransaction {
+                    val favoriteMovies: List<Movie> = movieDb.dao.getFavoriteMovies().map {
+                        it.toMovie()
+                    }
+
+                    val favoriteMovieIds: List<Int> = favoriteMovies.map { it.id }
                     val movieEntities = moviesResponse.results.mapIndexed { index, movie ->
                         val movieEntity: MovieEntity = movie.toMovieEntity().copy(
                             order = (lastRequestedPage * PAGE_SIZE + index),
-                            page = lastRequestedPage
+                            page = lastRequestedPage,
+                            isFavorite = favoriteMovieIds.contains(movie.id)
                         )
                         movieEntity
                     }

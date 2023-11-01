@@ -13,17 +13,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android.moviesfinder.R
 import com.android.moviesfinder.domain.model.Movie
+import com.android.moviesfinder.presentation.movies_list.MoviesListViewModel
 
 @Composable
-fun MovieListItem(movie: Movie) {
+fun MovieListItem(
+    movie: Movie,
+    viewModel: MoviesListViewModel = hiltViewModel()
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +44,7 @@ fun MovieListItem(movie: Movie) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             MovieImageSection(movie = movie)
-            MovieDetailSection(movie = movie)
+            MovieDetailSection(movie = movie, viewModel)
         }
     }
 }
@@ -57,13 +64,18 @@ fun MovieImageSection(movie: Movie) {
         Text(
             text = movie.voteAverage.toString(),
             style = MaterialTheme.typography.labelLarge,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
         )
     }
 }
 
 @Composable
-fun MovieDetailSection(movie: Movie) {
+fun MovieDetailSection(
+    movie: Movie,
+    viewModel: MoviesListViewModel
+) {
     Column {
         Text(
             text = movie.title,
@@ -77,21 +89,35 @@ fun MovieDetailSection(movie: Movie) {
             overflow = TextOverflow.Ellipsis,
             maxLines = 3
         )
-        ActionsRow()
+        ActionsRow(movie = movie, viewModel = viewModel)
     }
 }
 
 @Composable
-fun ActionsRow() {
+fun ActionsRow(movie: Movie, viewModel: MoviesListViewModel) {
     Row(
         horizontalArrangement = Arrangement.End,
         modifier = Modifier.fillMaxWidth()
     ) {
-        TextButton(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(id = R.string.like))
+        val moviesState = viewModel.state.value
+        val isFavorite = remember(moviesState) {
+            moviesState.movies.find { it.id == movie.id }?.isFavorite ?: false
         }
-        TextButton(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(id = R.string.unlike))
+
+        TextButton(
+            onClick = {
+                if (isFavorite) {
+                    viewModel.removeFavoriteMovie(movie.id)
+                } else {
+                    viewModel.addFavoriteMovie(movie.id)
+                }
+            }
+        ) {
+            if (isFavorite) {
+                Text(text = stringResource(id = R.string.unlike))
+            } else {
+                Text(text = stringResource(id = R.string.like))
+            }
         }
     }
 }

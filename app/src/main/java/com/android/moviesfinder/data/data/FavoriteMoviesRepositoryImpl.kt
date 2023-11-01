@@ -3,7 +3,7 @@ package com.android.moviesfinder.data.data
 import androidx.room.withTransaction
 import com.android.moviesfinder.data.db.FavoriteMovieEntity
 import com.android.moviesfinder.data.db.MovieDatabase
-import com.android.moviesfinder.data.db.toFavoriteMovieEntity
+import com.android.moviesfinder.data.toFavoriteMovieEntity
 import com.android.moviesfinder.domain.repository.FavoriteMoviesRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

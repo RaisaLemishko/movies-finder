@@ -6,9 +6,9 @@ import android.net.NetworkInfo
 import androidx.room.withTransaction
 import com.android.moviesfinder.data.db.MovieDatabase
 import com.android.moviesfinder.data.db.MovieEntity
-import com.android.moviesfinder.data.db.toMovie
+import com.android.moviesfinder.data.toMovie
 import com.android.moviesfinder.data.remote.MoviesApi
-import com.android.moviesfinder.data.remote.toMovieEntity
+import com.android.moviesfinder.data.toMovieEntity
 import com.android.moviesfinder.domain.model.Movie
 import com.android.moviesfinder.domain.repository.MoviesRepository
 import javax.inject.Inject

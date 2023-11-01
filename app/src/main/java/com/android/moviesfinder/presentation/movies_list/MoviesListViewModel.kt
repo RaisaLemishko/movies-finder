@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MoviesListViewModel
 @Inject constructor(
-    private val getMoviesUseCase: GetMoviesUseCase
+    private val getMoviesUseCase: GetMoviesUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf(MoviesListState())
@@ -39,18 +39,22 @@ class MoviesListViewModel
                     _state.value = MoviesListState(
                         isLoading = !isRefreshing,
                         isRefreshing = isRefreshing,
-                        movies = result.data?.movies ?: emptyList()
+                        movies = result.data ?: emptyList()
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = MoviesListState(
                         isLoading = false,
                         isRefreshing = false,
-                        error = result.message ?: UiText.StringResource(R.string.unexpected_error_occurred)
+                        error = result.message
+                            ?: UiText.StringResource(R.string.unexpected_error_occurred)
                     )
                 }
+
                 is Resource.Loading -> {
-                    _state.value = MoviesListState(isLoading = !isRefreshing, isRefreshing = isRefreshing)
+                    _state.value =
+                        MoviesListState(isLoading = !isRefreshing, isRefreshing = isRefreshing)
                 }
             }
         }.launchIn(viewModelScope)

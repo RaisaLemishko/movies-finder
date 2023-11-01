@@ -1,9 +1,8 @@
 package com.android.moviesfinder.data.remote
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
-import com.android.moviesfinder.domain.model.MoviesList
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class MoviesResponseDTO(
@@ -13,11 +12,4 @@ data class MoviesResponseDTO(
     val totalPages: Int = 0,
     @SerializedName("total_results")
     val totalResults: Int = 0
-)
-
-fun MoviesResponseDTO.toMoviesList() = MoviesList(
-    page = page,
-    movies = results.map { it.toMovie() },
-    totalPages = totalPages,
-    totalResults = totalResults
 )

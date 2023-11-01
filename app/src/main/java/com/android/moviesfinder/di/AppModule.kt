@@ -1,10 +1,14 @@
 package com.android.moviesfinder.di
 
 import android.content.Context
+import androidx.room.Room
 import com.android.moviesfinder.BuildConfig
 import com.android.moviesfinder.common.BASE_URL
+import com.android.moviesfinder.data.data.FavoriteMoviesRepositoryImpl
 import com.android.moviesfinder.data.data.MoviesRepositoryImpl
+import com.android.moviesfinder.data.db.MovieDatabase
 import com.android.moviesfinder.data.remote.MoviesApi
+import com.android.moviesfinder.domain.repository.FavoriteMoviesRepository
 import com.android.moviesfinder.domain.repository.MoviesRepository
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -63,12 +67,39 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMoviesRepository(api: MoviesApi, @Named("apiKey") apiKey: String): MoviesRepository {
-        return MoviesRepositoryImpl(moviesApi = api, apiKey = apiKey)
+    fun provideMoviesRepository(
+        api: MoviesApi,
+        @Named("apiKey") apiKey: String,
+        movieDb: MovieDatabase,
+        @ApplicationContext context: Context
+    ): MoviesRepository {
+        return MoviesRepositoryImpl(
+            moviesApi = api, apiKey = apiKey, movieDb = movieDb, context = context
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoriteMoviesRepository(
+        movieDb: MovieDatabase
+    ): FavoriteMoviesRepository {
+        return FavoriteMoviesRepositoryImpl(
+            movieDb = movieDb,
+        )
     }
 
     @Provides
     @Singleton
     @Named("apiKey")
     fun provideApiKey(): String = BuildConfig.MOVIES_API_KEY
+
+    @Provides
+    @Singleton
+    fun provideMovieDatabase(@ApplicationContext context: Context): MovieDatabase {
+        return Room.databaseBuilder(
+            context,
+            MovieDatabase::class.java,
+            "movies.db"
+        ).build()
+    }
 }

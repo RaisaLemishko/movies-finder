@@ -1,10 +1,10 @@
 package com.android.moviesfinder.data.remote
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
 import com.android.moviesfinder.common.MOVIE_POSTER_BASE_URL
-import com.android.moviesfinder.domain.model.Movie
+import com.android.moviesfinder.data.db.MovieEntity
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class MovieDTO(
@@ -32,12 +32,13 @@ data class MovieDTO(
     val voteCount: Int = 0 // 686
 )
 
-fun MovieDTO.toMovie(): Movie {
-    return Movie(
-        title = title,
-        description = overview,
-        voteAverage = voteAverage,
-        releaseDate = releaseDate,
-        posterUrl = MOVIE_POSTER_BASE_URL + posterPath
-    )
-}
+fun MovieDTO.toMovieEntity() = MovieEntity(
+    id = id,
+    title = title,
+    description = overview,
+    voteAverage = voteAverage,
+    releaseDate = releaseDate,
+    posterUrl = MOVIE_POSTER_BASE_URL + posterPath,
+    order = 0,
+    page = 0
+)
